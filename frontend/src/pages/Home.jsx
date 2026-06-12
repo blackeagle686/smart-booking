@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import api from '../api';
+import './pages.css';
 
 const createCityIcon = (imageUrl) => {
   return L.divIcon({
@@ -55,87 +56,35 @@ const Home = () => {
   };
 
   return (
-    <div style={{ animation: 'fadeIn 0.8s ease-out' }}>
-      <style>{`
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUpHero { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes zoomInHero { from { transform: scale(1.05); } to { transform: scale(1); } }
-        .hero-full {
-          position: relative;
-          width: 100vw;
-          margin-left: calc(50% - 50vw);
-          margin-right: calc(50% - 50vw);
-          height: 85vh;
-          margin-top: -2rem; /* Pull up to negate padding */
-          margin-bottom: 4rem;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          background-attachment: fixed;
-          overflow: hidden;
-          animation: zoomInHero 1.5s ease-out forwards;
-        }
-        .hero-content {
-          text-align: center;
-          color: white;
-          z-index: 2;
-          padding: 0 2rem;
-          animation: slideUpHero 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-          animation-delay: 0.2s;
-          opacity: 0;
-          margin-top: -5rem;
-        }
-        .search-form-container {
-          animation: slideUpHero 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-          animation-delay: 0.5s;
-          opacity: 0;
-        }
-      `}</style>
-
-      <div className="hero-full" style={{ 
-        backgroundImage: "linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('/hero-bg.png')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}>
+    <div className="home-container">
+      <div className="hero-full" style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('/hero-bg.png')" }}>
         <div className="hero-content">
-          <h1 style={{ fontWeight: '800', letterSpacing: '-1.5px', fontSize: 'clamp(3rem, 5vw, 5.5rem)', marginBottom: '1rem', textShadow: '0 4px 15px rgba(0,0,0,0.4)' }}>
+          <h1 className="hero-title">
             Find your perfect stay
           </h1>
-          <p style={{ fontSize: '1.4rem', color: 'rgba(255,255,255,0.9)', margin: '0 auto', textShadow: '0 2px 8px rgba(0,0,0,0.5)', maxWidth: '750px', lineHeight: 1.6 }}>
+          <p className="hero-subtitle">
             Discover the world's most breathtaking hotels with exclusive deals, stunning views, and unforgettable agentic experiences.
           </p>
         </div>
       </div>
         
-      <form onSubmit={handleSearch} className="card search-form-container" style={{ 
-        display: 'flex', gap: '1.5rem', maxWidth: '1050px', width: '90%', 
-        alignItems: 'center', flexWrap: 'wrap', padding: '1.5rem 2rem',
-        margin: '-8.5rem auto 5rem auto',
-        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)',
-        position: 'relative',
-        zIndex: 10,
-        borderRadius: '24px',
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)'
-      }}>
-        <div style={{ flex: 1.2, minWidth: '220px', display: 'flex', alignItems: 'center', borderRight: '1px solid #e2e8f0', paddingRight: '1.5rem' }}>
+      <form onSubmit={handleSearch} className="card search-form-container">
+        <div className="search-input-group" style={{ flex: 1.2, minWidth: '220px' }}>
           <MapPin color="var(--color-3)" size={22} style={{ marginRight: '0.75rem', flexShrink: 0 }}/>
           <input 
             type="text" 
             placeholder="Where are you going?" 
-            style={{ border: 'none', width: '100%', outline: 'none', fontSize: '1.05rem', backgroundColor: 'transparent' }} 
+            className="search-input"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div style={{ flex: 1.8, minWidth: '300px', display: 'flex', alignItems: 'center', borderRight: '1px solid #e2e8f0', paddingRight: '1.5rem' }}>
+        <div className="search-input-group" style={{ flex: 1.8, minWidth: '300px' }}>
           <Calendar color="var(--color-3)" size={22} style={{ marginRight: '0.75rem', flexShrink: 0 }}/>
           <input 
             type="date" 
-            style={{ border: 'none', width: '100%', outline: 'none', fontSize: '1rem', backgroundColor: 'transparent', color: checkIn ? 'var(--text-primary)' : 'var(--text-secondary)' }} 
+            className="search-input"
+            style={{ color: checkIn ? 'var(--text-primary)' : 'var(--text-secondary)' }} 
             value={checkIn}
             min={new Date().toISOString().split('T')[0]}
             onChange={(e) => setCheckIn(e.target.value)}
@@ -143,7 +92,8 @@ const Home = () => {
           <span style={{ margin: '0 1rem', color: 'var(--text-secondary)', fontWeight: 'bold' }}>—</span>
           <input 
             type="date" 
-            style={{ border: 'none', width: '100%', outline: 'none', fontSize: '1rem', backgroundColor: 'transparent', color: checkOut ? 'var(--text-primary)' : 'var(--text-secondary)' }} 
+            className="search-input"
+            style={{ color: checkOut ? 'var(--text-primary)' : 'var(--text-secondary)' }} 
             value={checkOut}
             min={checkIn || new Date().toISOString().split('T')[0]}
             onChange={(e) => setCheckOut(e.target.value)}
@@ -158,8 +108,8 @@ const Home = () => {
         </button>
       </form>
 
-      <h2 style={{ marginTop: '3rem' }}>Popular Destinations in Egypt</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginTop: '1rem' }}>
+      <h2 className="section-title">Popular Destinations in Egypt</h2>
+      <div className="grid-auto-fit">
         {cities.slice(0, 8).map(city => (
           <Link 
             to={`/city/${city.id}`} 
@@ -170,15 +120,15 @@ const Home = () => {
               e.dataTransfer.setData('oasis_bot', JSON.stringify({ action: 'ASK_ABOUT', query: `Tell me more about the city of ${city.name}. What are the popular attractions and best hotels there?` }));
             }}
           >
-            <div className="card" style={{ padding: '0', overflow: 'hidden', pointerEvents: 'none' }}>
+            <div className="card card-image-wrapper">
               <img 
                 src={city.image || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=500&q=80'} 
                 alt={city.name} 
-                style={{ width: '100%', height: '200px', objectFit: 'cover' }} 
+                className="card-image"
               />
-              <div style={{ padding: '1.5rem' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', textTransform: 'capitalize' }}>{city.name}</h3>
-                <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Explore properties</p>
+              <div className="card-content">
+                <h3 className="card-title">{city.name}</h3>
+                <p className="card-text-secondary">Explore properties</p>
               </div>
             </div>
           </Link>
@@ -188,7 +138,7 @@ const Home = () => {
       {/* EXPLORE BY MAP */}
       <div style={{ marginTop: '5rem' }}>
         <h2 style={{ marginBottom: '1.5rem' }}>Explore by Map</h2>
-        <div style={{ height: '450px', width: '100%', borderRadius: '24px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 15px 35px rgba(0,0,0,0.1)' }}>
+        <div className="map-container-wrapper">
           <MapContainer center={[26.8206, 30.8025]} zoom={7} style={{ height: '100%', width: '100%' }} scrollWheelZoom={false}>
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
@@ -201,10 +151,10 @@ const Home = () => {
                     <img 
                       src={city.image || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=500&q=80'} 
                       alt={city.name} 
-                      style={{ width: '100%', height: '120px', objectFit: 'cover' }} 
+                      className="popup-image"
                     />
-                    <div style={{ padding: '1rem', textAlign: 'center' }}>
-                      <h3 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-primary)', fontSize: '1.2rem', textTransform: 'capitalize' }}>{city.name}</h3>
+                    <div className="popup-content">
+                      <h3 className="popup-title">{city.name}</h3>
                       <Link to={`/city/${city.id}`} className="btn-primary" style={{ display: 'block', padding: '0.6rem 1rem', fontSize: '0.95rem', textDecoration: 'none', borderRadius: '8px', color: 'white', fontWeight: 'bold' }}>
                         Explore City
                       </Link>
@@ -218,8 +168,8 @@ const Home = () => {
       </div>
 
       {/* FEATURED HOTELS */}
-      <h2 style={{ marginTop: '4rem' }}>Featured Hotels</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginTop: '1rem' }}>
+      <h2 className="section-title">Featured Hotels</h2>
+      <div className="grid-auto-fit">
         {hotels.slice(0, 4).map(hotel => (
           <Link 
             to={`/hotels/${hotel.id}`} 
@@ -230,20 +180,20 @@ const Home = () => {
               e.dataTransfer.setData('oasis_bot', JSON.stringify({ action: 'ASK_ABOUT', query: `Can you tell me more about the hotel ${hotel.title} in ${hotel.location}? What are its top features?` }));
             }}
           >
-            <div className="card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%', pointerEvents: 'none' }}>
+            <div className="card card-image-wrapper">
               <img 
                 src={hotel.image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=500&q=80'} 
                 alt={hotel.title} 
-                style={{ width: '100%', height: '200px', objectFit: 'cover' }} 
+                className="card-image"
               />
-              <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <div className="card-content">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <h3 style={{ margin: '0 0 0.5rem 0', textTransform: 'capitalize' }}>{hotel.title}</h3>
-                  <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'var(--color-1)', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem' }}>
+                  <h3 className="card-title">{hotel.title}</h3>
+                  <div className="rating-badge">
                     {hotel.rate} <Star size={12} style={{ marginLeft: '2px', fill: 'white' }} />
                   </div>
                 </div>
-                <p style={{ color: 'var(--text-secondary)', margin: 0, flex: 1, fontSize: '0.9rem' }}>
+                <p className="card-text-secondary">
                   <MapPin size={14} style={{ verticalAlign: 'middle', marginRight: '4px' }} />
                   {hotel.location}
                 </p>
@@ -254,8 +204,8 @@ const Home = () => {
       </div>
 
       {/* TOP ROOMS */}
-      <h2 style={{ marginTop: '4rem' }}>Top Rooms</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginTop: '1rem', marginBottom: '4rem' }}>
+      <h2 className="section-title">Top Rooms</h2>
+      <div className="grid-auto-fit" style={{ marginBottom: '4rem' }}>
         {rooms.slice(0, 4).map(room => (
           <Link 
             to={`/book/${room.id}`} 
@@ -266,15 +216,15 @@ const Home = () => {
               e.dataTransfer.setData('oasis_bot', JSON.stringify({ action: 'ASK_ABOUT', query: `Tell me about the room "${room.title}". What is the pricing and availability?` }));
             }}
           >
-            <div className="card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%', pointerEvents: 'none' }}>
+            <div className="card card-image-wrapper">
               <img 
                 src={room.image || 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=500&q=80'} 
                 alt={room.title} 
-                style={{ width: '100%', height: '200px', objectFit: 'cover' }} 
+                className="card-image"
               />
-              <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', textTransform: 'capitalize' }}>{room.title}</h3>
-                <p style={{ color: 'var(--text-secondary)', margin: '0 0 1rem 0', flex: 1, fontSize: '0.9rem' }}>{room.description.substring(0, 80)}...</p>
+              <div className="card-content">
+                <h3 className="card-title">{room.title}</h3>
+                <p className="card-text-secondary" style={{ marginBottom: '1rem' }}>{room.description.substring(0, 80)}...</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
                   <span style={{ fontWeight: 'bold', color: 'var(--color-1)', fontSize: '1.2rem' }}>EGP {room.price_per_night}</span>
                   <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>/ night</span>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, MapPin, Star } from 'lucide-react';
 import api from '../api';
+import './pages.css';
 
 const HotelsList = () => {
   const [hotels, setHotels] = useState([]);
@@ -101,9 +102,9 @@ const HotelsList = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="page-header">
         <h2 style={{ margin: 0 }}>Available Hotels</h2>
-        <form onSubmit={handleSearch} style={{ display: 'flex', gap: '0.5rem' }}>
+        <form onSubmit={handleSearch} className="search-bar-form">
           <div style={{ position: 'relative' }}>
             <Search size={18} style={{ position: 'absolute', left: '10px', top: '12px', color: 'var(--text-secondary)' }} />
             <input 
@@ -131,36 +132,40 @@ const HotelsList = () => {
       </div>
 
       {hotels.length === 0 ? (
-        <div style={{ padding: '4rem 2rem', textAlign: 'center', background: '#f8fafc', borderRadius: '12px', border: '1px dashed #cbd5e1', margin: '2rem 0 10rem 0' }}>
-          <Search size={48} style={{ color: '#94a3b8', marginBottom: '1rem' }} />
+        <div className="empty-state">
+          <Search size={48} className="empty-state-icon" />
           <h3 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>No hotels found</h3>
           <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Try adjusting your destination, dates, or search terms to find available properties.</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+        <div className="grid-auto-fill">
           {currentHotels.map(hotel => (
-            <div key={hotel.id} className="card" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            <div key={hotel.id} className="card card-image-wrapper">
               <img 
                 src={hotel.image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80'} 
                 alt={hotel.title} 
-                style={{ width: '100%', height: '200px', objectFit: 'cover' }} 
+                className="card-image"
               />
-              <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <div className="card-content">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <h3 style={{ margin: '0 0 0.5rem 0' }}>{hotel.title}</h3>
-                  <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'var(--color-1)', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.9rem' }}>
+                  <h3 className="card-title">{hotel.title}</h3>
+                  <div className="rating-badge">
                     {hotel.rate} <Star size={14} style={{ marginLeft: '2px', fill: 'white' }} />
                   </div>
                 </div>
                 <p style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', fontSize: '0.9rem', marginBottom: '1rem' }}>
                   <MapPin size={16} style={{ marginRight: '0.25rem', flexShrink: 0 }} /> {hotel.city_details?.name ? `${hotel.city_details.name}, ` : ''}{hotel.location}
                 </p>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem', flex: 1 }}>
+                <p className="card-text-secondary" style={{ marginBottom: '1.5rem' }}>
                   {hotel.description ? `${hotel.description.substring(0, 100)}...` : 'No description available.'}
                 </p>
-                <Link to={`/hotels/${hotel.id}`} style={{ marginTop: 'auto' }}>
-                  <button className="btn-primary" style={{ width: '100%' }}>View Details</button>
-                </Link>
+                <button 
+                  className="btn-primary" 
+                  style={{ width: '100%', marginTop: 'auto' }} 
+                  onClick={() => navigate(`/hotels/${hotel.id}`)}
+                >
+                  View Details
+                </button>
               </div>
             </div>
           ))}
@@ -169,7 +174,7 @@ const HotelsList = () => {
 
       {/* PAGINATION CONTROLS */}
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '3rem', marginBottom: '2rem' }}>
+        <div className="pagination-container">
           <button 
             className="btn-secondary" 
             disabled={currentPage === 1} 
@@ -181,7 +186,7 @@ const HotelsList = () => {
             Previous
           </button>
           
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <div className="pagination-numbers">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
               <button 
                 key={page} 
@@ -189,16 +194,7 @@ const HotelsList = () => {
                   setCurrentPage(page);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                style={{ 
-                  padding: '0.5rem 1rem', 
-                  border: 'none', 
-                  borderRadius: '8px', 
-                  cursor: 'pointer', 
-                  background: currentPage === page ? 'var(--color-1)' : '#f1f5f9', 
-                  color: currentPage === page ? 'white' : 'var(--text-primary)',
-                  fontWeight: currentPage === page ? 'bold' : '500',
-                  transition: 'all 0.2s'
-                }}
+                className={`page-btn ${currentPage === page ? 'active' : 'inactive'}`}
               >
                 {page}
               </button>

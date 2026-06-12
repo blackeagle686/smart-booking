@@ -38,3 +38,12 @@ class EmbeddingService:
         using an LRU cache to avoid recomputing the same queries.
         """
         return cls._cached_encode(text)
+
+    @classmethod
+    def get_embeddings(cls, texts: list):
+        """
+        Generates embeddings for a batch of texts simultaneously.
+        This is significantly faster than generating them one by one.
+        """
+        model = cls.get_model()
+        return model.encode(texts, convert_to_tensor=False).tolist()

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -9,10 +9,30 @@ import Register from './pages/Register';
 import HotelsList from './pages/HotelsList';
 import HotelDetails from './pages/HotelDetails';
 import CityDetails from './pages/CityDetails';
+import CitiesList from './pages/CitiesList';
 import RoomBookingPage from './pages/RoomBookingPage';
 import UserProfile from './pages/UserProfile';
 import AdminDashboard from './pages/AdminDashboard';
 import './index.css';
+
+// ScrollToTop and Title Component
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    
+    // Set dynamic page title
+    const pathParts = pathname.split('/').filter(Boolean);
+    let pageName = 'Home';
+    if (pathParts.length > 0) {
+      pageName = pathParts[0].charAt(0).toUpperCase() + pathParts[0].slice(1);
+    }
+    document.title = `${pageName} | SmartHotel`;
+  }, [pathname]);
+
+  return null;
+};
 
 // Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -33,6 +53,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="app-container">
         <Navbar />
         <main className="main-content">
@@ -40,6 +61,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/cities" element={<CitiesList />} />
             <Route path="/hotels" element={<HotelsList />} />
             <Route path="/hotels/:id" element={<HotelDetails />} />
             <Route path="/city/:id" element={<CityDetails />} />

@@ -68,10 +68,8 @@ class VectorStoreManager:
         for city in cities:
             desc = city.description or f"A beautiful city named {city.name} located in Egypt."
             doc_text = f"City: {city.name}. Description: {desc}"
-            embedding = EmbeddingService.get_embedding(doc_text)
             
             batch_ids.append(f"city_{city.id}")
-            batch_embeddings.append(embedding)
             batch_metadatas.append({"type": "city", "id": city.id, "name": city.name})
             batch_documents.append(doc_text)
             logger.info(f"Processed City: {city.name}")
@@ -81,10 +79,8 @@ class VectorStoreManager:
         for hotel in hotels:
             city_name = hotel.city.name if hotel.city else "Egypt"
             doc_text = f"Hotel: {hotel.title} in {city_name}. Location: {hotel.location}. Description: {hotel.description}. Rating: {hotel.rate}/10."
-            embedding = EmbeddingService.get_embedding(doc_text)
             
             batch_ids.append(f"hotel_{hotel.id}")
-            batch_embeddings.append(embedding)
             batch_metadatas.append({
                 "type": "hotel", 
                 "id": hotel.id, 
@@ -101,10 +97,8 @@ class VectorStoreManager:
             hotel_title = room.hotel.title
             city_name = room.hotel.city.name if room.hotel.city else "Egypt"
             doc_text = f"Room: {room.title} at {hotel_title} in {city_name}. Price: EGP {room.price_per_night} per night. Description: {room.description}. Rating: {room.rate}/10."
-            embedding = EmbeddingService.get_embedding(doc_text)
             
             batch_ids.append(f"room_{room.id}")
-            batch_embeddings.append(embedding)
             batch_metadatas.append({
                 "type": "room", 
                 "id": room.id, 
@@ -115,6 +109,11 @@ class VectorStoreManager:
             })
             batch_documents.append(doc_text)
             logger.info(f"Processed Room: {room.title} at {hotel_title}")
+            
+        # Compute embeddings in batch for massive speedup
+        if batch_documents:
+            logger.info("Computing batch embeddings...")
+            batch_embeddings = EmbeddingService.get_embeddings(batch_documents)
             
         # Bulk Insert
         if batch_ids:

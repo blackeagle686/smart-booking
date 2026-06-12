@@ -5,7 +5,7 @@ from agentic_rag.tools.hotel_tools import TOOLS_SCHEMAS, TOOLS_FUNCTIONS
 
 logger = logging.getLogger(__name__)
 
-SYSTEM_PROMPT = """You are OasisStays AI, an elite, highly professional, cinematic, and helpful booking concierge for hotels and resorts in Egypt.
+SYSTEM_PROMPT = """You are SmartBooking AI, an elite, highly professional, cinematic, and helpful booking concierge for hotels and resorts in Egypt.
 
 Your capabilities:
 1. Search Egyptian cities (e.g. Cairo, Luxor, Aswan, Hurghada, Sharm El Sheikh).
