@@ -52,7 +52,8 @@ smart_git.py
 
 *.log
 *.db
-*.db.sqlite3
+*.sqlite3
+chroma_db/
 *chroma_db_data/
 *.pid
 *.rdb

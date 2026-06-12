@@ -1,9 +1,0 @@
-Watching for file changes with StatReloader
-[11/Jun/2026 18:30:23] "GET /api/cities/ HTTP/1.1" 200 2671
-[11/Jun/2026 18:30:23] "GET /api/cities/ HTTP/1.1" 200 2671
-[11/Jun/2026 18:30:23] "GET /api/rooms/ HTTP/1.1" 200 47963
-[11/Jun/2026 18:30:23] "GET /api/hotels/ HTTP/1.1" 200 75447
-[11/Jun/2026 18:30:23] "GET /media/cities/pexels-dina-mohamed-2158553014-37954341.jpg HTTP/1.1" 304 0
-[11/Jun/2026 18:30:23] "GET /api/rooms/ HTTP/1.1" 200 47963
-[11/Jun/2026 18:30:23] "GET /media/cities/noel-schlafli-0DSG8vxJDf8-unsplash.jpg HTTP/1.1" 304 0
-[11/Jun/2026 18:30:23] "GET /api/hotels/ HTTP/1.1" 200 75447
