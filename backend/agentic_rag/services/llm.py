@@ -1,13 +1,17 @@
 import logging
+import os
+from dotenv import load_dotenv
 from openai import OpenAI
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
 class LLMService:
     _client = None
-    MODEL_NAME = "LongCat-2.0-Preview"
-    API_KEY = "ak_2yp3Xw1Ny7ky2pF7er9x93ZO9jj6G"
-    BASE_URL = "https://api.longcat.chat/openai"
+    MODEL_NAME = os.getenv("LONGCAT_MODEL_NAME", "LongCat-2.0-Preview")
+    API_KEY = os.getenv("LONGCAT_API_KEY", "")
+    BASE_URL = os.getenv("LONGCAT_BASE_URL", "https://api.longcat.chat/openai")
 
     @classmethod
     def get_client(cls):

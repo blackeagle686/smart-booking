@@ -1,5 +1,7 @@
 # SmartBooking Platform
 
+![SmartBooking Platform Preview](./docs-img/img-docs.png)
+
 A modern, enterprise-grade hotel booking and concierge platform powered by an intelligent Agentic RAG Chatbot. 
 
 ## Overview
@@ -19,6 +21,17 @@ The project is structured into two main components:
 - **AI Concierge**: An embedded AI chatbot built with markdown support and draggable custom UI widgets (Maps, Itineraries, Carousels).
 - **Destination Discovery**: A visual-first approach to exploring cities and filtering available accommodations.
 - **Secure Authentication**: Token-based authentication securing user profiles, administrative dashboards, and AI interactions.
+
+## Screenshots
+
+<div align="center">
+  <img src="./docs-img/image.png" alt="Screenshot 1" width="48%" />
+  <img src="./docs-img/image%20copy.png" alt="Screenshot 2" width="48%" />
+</div>
+<br />
+<div align="center">
+  <img src="./docs-img/image%20copy%202.png" alt="Screenshot 3" width="80%" />
+</div>
 
 ## Getting Started
 
