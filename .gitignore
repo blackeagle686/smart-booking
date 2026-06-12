@@ -50,3 +50,9 @@ phoenix_engine/.vs/phoenix_engine/
 agent_venv/
 smart_git.py
 
+*.log
+*.db
+*.db.sqlite3
+*chroma_db_data/
+*.pid
+*.rdb
