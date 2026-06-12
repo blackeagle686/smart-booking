@@ -1047,9 +1047,16 @@ const Chatbot = () => {
 
       {/* Global CSS for Animations */}
       <style>{`
-        @keyframes slideUpCenter {
-          from { opacity: 0; transform: translate(-50%, calc(-50% + 20px)); }
-          to { opacity: 1; transform: translate(-50%, -50%); }
+        @keyframes scaleUpFromButton {
+          0% { 
+            opacity: 0; 
+            transform: translate(calc(-50% + 35vw), calc(-50% + 35vh)) scale(0.05); 
+            border-radius: 60px;
+          }
+          100% { 
+            opacity: 1; 
+            transform: translate(-50%, -50%) scale(1); 
+          }
         }
         @keyframes bounce {
           0%, 80%, 100% { transform: scale(0); }

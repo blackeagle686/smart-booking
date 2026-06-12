@@ -4,12 +4,23 @@ import chromadb
 from django.conf import settings
 from agentic_rag.services.embedding import EmbeddingService
 
+# Move Django model imports to the top as requested
+from api.models import City, Hotel, Room
+
+# Initialize logger
 logger = logging.getLogger(__name__)
 
-# Persistence path for vector database
+# Persistence path for the ChromaDB vector database
 CHROMA_DIR = os.path.join(settings.BASE_DIR, "chroma_db_data")
 
+
 class VectorStoreManager:
+    """
+    Manages the ChromaDB vector database instance for the SmartBooking platform.
+    Handles the persistence, ingestion of relational data (Cities, Hotels, Rooms) 
+    into vector embeddings, and provides similarity search capabilities for the Agentic RAG.
+    """
+    
     _client = None
     _collection = None
     _is_ingested = None
@@ -18,7 +29,10 @@ class VectorStoreManager:
     @classmethod
     def get_client(cls):
         """
-        Singleton persistent ChromaDB client.
+        Retrieves the singleton instance of the persistent ChromaDB client.
+        
+        Returns:
+            chromadb.PersistentClient: The configured ChromaDB client.
         """
         if cls._client is None:
             logger.info(f"Initializing persistent ChromaDB client at: {CHROMA_DIR}")
@@ -28,7 +42,10 @@ class VectorStoreManager:
     @classmethod
     def get_collection(cls):
         """
-        Gets or creates the default collection.
+        Retrieves or creates the primary vector collection.
+        
+        Returns:
+            chromadb.Collection: The main collection for the application.
         """
         if cls._collection is None:
             client = cls.get_client()
@@ -38,43 +55,44 @@ class VectorStoreManager:
     @classmethod
     def ingest_all(cls):
         """
-        Ingests all cities, hotels, and rooms from the SQLite DB into ChromaDB.
+        Extracts all Cities, Hotels, and Rooms from the SQLite database, 
+        generates vector embeddings for them via the EmbeddingService, 
+        and bulk-inserts them into ChromaDB for efficient semantic search.
         """
-        from api.models import City, Hotel, Room
-        
         logger.info("Starting database ingestion to vector store...")
         collection = cls.get_collection()
         
-        # Clear existing items to start fresh
+        # Step 1: Clear existing data to prevent duplicates
         try:
             count = collection.count()
             if count > 0:
                 logger.info(f"Clearing {count} existing records in collection...")
-                # Fetch all ids and delete them
                 all_items = collection.get()
                 if all_items and all_items['ids']:
                     collection.delete(ids=all_items['ids'])
         except Exception as e:
             logger.warning(f"Failed to clear existing collection: {e}")
 
-        # Batch aggregators for optimized insertion
         batch_ids = []
         batch_embeddings = []
         batch_metadatas = []
         batch_documents = []
 
-        # Process Cities
+        # Step 2: Process City Models
         cities = City.objects.all()
         for city in cities:
             desc = city.description or f"A beautiful city named {city.name} located in Egypt."
             doc_text = f"City: {city.name}. Description: {desc}"
             
             batch_ids.append(f"city_{city.id}")
-            batch_metadatas.append({"type": "city", "id": city.id, "name": city.name})
+            batch_metadatas.append({
+                "type": "city", 
+                "id": city.id, 
+                "name": city.name
+            })
             batch_documents.append(doc_text)
-            logger.info(f"Processed City: {city.name}")
 
-        # Process Hotels
+        # Step 3: Process Hotel Models
         hotels = Hotel.objects.select_related('city').all()
         for hotel in hotels:
             city_name = hotel.city.name if hotel.city else "Egypt"
@@ -89,9 +107,8 @@ class VectorStoreManager:
                 "city_name": city_name
             })
             batch_documents.append(doc_text)
-            logger.info(f"Processed Hotel: {hotel.title}")
 
-        # Process Rooms
+        # Step 4: Process Room Models
         rooms = Room.objects.select_related('hotel', 'hotel__city').all()
         for room in rooms:
             hotel_title = room.hotel.title
@@ -108,14 +125,12 @@ class VectorStoreManager:
                 "price": float(room.price_per_night)
             })
             batch_documents.append(doc_text)
-            logger.info(f"Processed Room: {room.title} at {hotel_title}")
             
-        # Compute embeddings in batch for massive speedup
+        # Step 5: Compute embeddings and perform bulk insertion
         if batch_documents:
             logger.info("Computing batch embeddings...")
             batch_embeddings = EmbeddingService.get_embeddings(batch_documents)
             
-        # Bulk Insert
         if batch_ids:
             collection.add(
                 ids=batch_ids,
@@ -130,11 +145,19 @@ class VectorStoreManager:
     @classmethod
     def similarity_search(cls, query_text: str, limit: int = 5, item_type: str = None):
         """
-        Queries ChromaDB for similar items. Optional type filter (city, hotel, room).
+        Queries the vector database for items semantically similar to the provided text.
+        
+        Args:
+            query_text (str): The search query.
+            limit (int): Maximum number of results to return.
+            item_type (str, optional): Filter by type (e.g., 'city', 'hotel', 'room').
+            
+        Returns:
+            list[dict]: A list of matched items with their metadata and distance scores.
         """
         collection = cls.get_collection()
         
-        # Optimize disk I/O: Only check count once per app lifecycle
+        # Optimize disk I/O: Auto-ingest if the collection is empty upon first search
         if cls._is_ingested is None:
             if collection.count() == 0:
                 logger.info("Vector collection is empty. Auto-ingesting database models...")
@@ -143,18 +166,16 @@ class VectorStoreManager:
 
         query_embedding = EmbeddingService.get_embedding(query_text)
         
-        where_filter = {}
-        if item_type:
-            where_filter = {"type": item_type}
+        where_filter = {"type": item_type} if item_type else None
 
         results = collection.query(
             query_embeddings=[query_embedding],
             n_results=limit,
-            where=where_filter if where_filter else None
+            where=where_filter
         )
         
         formatted_results = []
-        if results and results['ids'] and len(results['ids'][0]) > 0:
+        if results and results.get('ids') and len(results['ids'][0]) > 0:
             for idx in range(len(results['ids'][0])):
                 formatted_results.append({
                     "id": results['ids'][0][idx],
@@ -162,4 +183,5 @@ class VectorStoreManager:
                     "metadata": results['metadatas'][0][idx],
                     "distance": results['distances'][0][idx] if 'distances' in results else 0.0
                 })
+                
         return formatted_results

@@ -55,44 +55,46 @@ function App() {
     <Router>
       <ScrollToTop />
       <div className="app-container">
-        <Navbar />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/cities" element={<CitiesList />} />
-            <Route path="/hotels" element={<HotelsList />} />
-            <Route path="/hotels/:id" element={<HotelDetails />} />
-            <Route path="/city/:id" element={<CityDetails />} />
-            <Route 
-              path="/book/:roomId" 
-              element={
-                <ProtectedRoute>
-                  <RoomBookingPage />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/profile" 
-              element={
-                <ProtectedRoute>
-                  <UserProfile />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/admin" 
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } 
-            />
-          </Routes>
-        </main>
+        <div className="page-wrapper">
+          <Navbar />
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/cities" element={<CitiesList />} />
+              <Route path="/hotels" element={<HotelsList />} />
+              <Route path="/hotels/:id" element={<HotelDetails />} />
+              <Route path="/city/:id" element={<CityDetails />} />
+              <Route 
+                path="/book/:roomId" 
+                element={
+                  <ProtectedRoute>
+                    <RoomBookingPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <UserProfile />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute adminOnly={true}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
         <Chatbot />
-        <Footer />
       </div>
     </Router>
   );
